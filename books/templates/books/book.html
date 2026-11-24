@@ -1,0 +1,46 @@
+{% extends "books/layout.html" %}
+
+{% block title %}{{ book.title }}{% endblock %}
+
+{% block body %}
+    <div class="box">
+        <h2>{{ book.title }}</h2>
+        <p class="small-text">by {{ book.author }}</p>
+        <hr>
+
+        <ul class="details">
+            <li><b>Genre:</b> {{ book.genre }}</li>
+            <li><b>Year:</b> {{ book.year }}</li>
+            <li><b>Description:</b> {{ book.description|default:"No description." }}</li>
+        </ul>
+
+        <h5>Reserved by</h5>
+        <ul>
+            {% for reader in readers %}
+                <li>{{ reader.username }}</li>
+            {% empty %}
+                <li class="small-text">No one reserved this book yet.</li>
+            {% endfor %}
+        </ul>
+
+        <div class="d-flex flex-wrap gap-2 mt-3">
+            <form action="{% url 'books:reserve' book.id %}" method="post">
+                {% csrf_token %}
+                {% if reserved %}
+                    <input type="submit" class="btn btn-brown" value="Cancel Reservation">
+                {% else %}
+                    <input type="submit" class="btn btn-main" value="Reserve">
+                {% endif %}
+            </form>
+
+            <a class="btn btn-outline-main" href="{% url 'books:update' book.id %}">Update</a>
+
+            <form action="{% url 'books:delete' book.id %}" method="post">
+                {% csrf_token %}
+                <input type="submit" class="btn btn-outline-danger" value="Delete">
+            </form>
+
+            <a class="btn btn-link back-link ms-auto" href="{% url 'books:index' %}">Back to all books</a>
+        </div>
+    </div>
+{% endblock %}
